@@ -11,7 +11,11 @@ import {
   collectBranches,
   listFiles,
   initRepo,
-  isRepo
+  isRepo,
+  stageFiles,
+  unstageFiles,
+  commit,
+  checkoutBranch
 } from "../lib/git-data.js";
 
 let pass = 0;
@@ -81,6 +85,54 @@ try {
   const initResult = initRepo(plainDir);
   check("initRepo ok 且返回 root", initResult.ok === true && initResult.root === realpathSync(plainDir));
   check("init 后 isRepo(plain) === true", isRepo(plainDir) === true);
+
+  console.log("── git 操作场景（stage/unstage/commit/checkout）──");
+  // 暂存两个改动文件
+  const stageResult = stageFiles(repoDir, ["src/a.js", "notes.txt"]);
+  check("stageFiles 返回 staged 2 个", stageResult.ok && stageResult.staged.length === 2);
+  let st = collectStatus(repoDir);
+  check("stage 后 index 变为 M/A（已暂存）", st.files.every((f) => f.index !== " " && f.index !== "?"));
+  // 取消暂存一个
+  const unstageResult = unstageFiles(repoDir, ["notes.txt"]);
+  check("unstageFiles 返回 unstaged 1 个", unstageResult.ok && unstageResult.unstaged.length === 1);
+  st = collectStatus(repoDir);
+  const notes = st.files.find((f) => f.path === "notes.txt");
+  check("unstage 后 notes.txt 回到 ??", notes !== void 0 && notes.status === "??");
+  // 非法路径校验
+  let rejected = false;
+  try {
+    stageFiles(repoDir, ["nonexistent.txt"]);
+  } catch {
+    rejected = true;
+  }
+  check("非法路径被拒绝", rejected === true);
+  // 提交已暂存的 src/a.js
+  const commitResult = commit(repoDir, "feat: update app");
+  check("commit 成功且返回 shortHash", commitResult.ok === true && typeof commitResult.shortHash === "string" && commitResult.shortHash.length >= 7);
+  const logAfter = collectLog(repoDir);
+  check("log 现在有 2 条提交", logAfter.length === 2 && logAfter[0].subject === "feat: update app");
+  // 空消息被拒绝
+  rejected = false;
+  try {
+    commit(repoDir, "   ");
+  } catch {
+    rejected = true;
+  }
+  check("空提交消息被拒绝", rejected === true);
+  // 分支切换：新建 feature 分支再切回
+  execFileSync("git", ["switch", "-c", "feature"], { cwd: repoDir });
+  check("collectBranches 含 feature 且为当前", collectBranches(repoDir).branches.some((b) => b.name === "feature" && b.current));
+  const switchResult = checkoutBranch(repoDir, "main");
+  check("checkoutBranch 切回 main", switchResult.ok === true && switchResult.branch === "main");
+  check("切回后 current 是 main", collectBranches(repoDir).branches.find((b) => b.name === "main").current === true);
+  // 不存在的分支被拒绝
+  rejected = false;
+  try {
+    checkoutBranch(repoDir, "no-such-branch");
+  } catch {
+    rejected = true;
+  }
+  check("不存在分支被拒绝", rejected === true);
 
   console.log(`\n✅ 全部 ${pass} 项检查通过`);
 } finally {

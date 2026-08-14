@@ -42,11 +42,17 @@ web profile 的 client-modules 会自动扫描 `dsh.client` 声明，把 `lib/cl
 | `GET /dsh-git/log?cwd=` | 提交历史（hash / 作者 / 日期 / subject） |
 | `GET /dsh-git/branches?cwd=` | 分支列表 + `git log --graph` ASCII 提交图 |
 | `POST /dsh-git/init` `{cwd}` | `git init`（非 repo 目录的初始化按钮） |
+| `POST /dsh-git/stage` `{cwd, paths}` | 暂存文件（路径必须来自当前 status，防止任意参数） |
+| `POST /dsh-git/unstage` `{cwd, paths}` | 取消暂存（只允许已暂存文件） |
+| `POST /dsh-git/commit` `{cwd, message}` | 提交已暂存内容（消息非空校验） |
+| `POST /dsh-git/push` `{cwd}` | `git push` |
+| `POST /dsh-git/pull` `{cwd}` | `git pull` |
+| `POST /dsh-git/checkout` `{cwd, branch}` | `git switch`（分支必须存在于分支列表） |
 
 ## 验证
 
 ```bash
-node test/verify-server.mjs   # 数据层单测（repo / 非 repo / init 场景）
+node test/verify-server.mjs   # 数据层单测（repo / 非 repo / init / git 操作场景，31 项）
 ```
 
 ## 常见问题
