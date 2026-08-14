@@ -1,7 +1,7 @@
 {
-  "name": "dsh-git",
+  "name": "@taontech/dsh-git",
   "version": "0.1.0",
-  "description": "Git tab for DeepSeek Harness: repo overview, file status, commit history, branch view and git init — powered by gmc.",
+  "description": "Git tab for DeepSeek Harness: repo overview, file status, commit history, branch view, git init and git operations — powered by gmc.",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -17,7 +17,24 @@
     "lib",
     "cordis.patch.yml"
   ],
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "git",
+    "gmc"
+  ],
   "license": "MIT",
+  "engines": {
+    "node": ">= 18"
+  },
+  "scripts": {
+    "prepublishOnly": "node test/verify-server.mjs",
+    "test": "node test/verify-server.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"

@@ -1,7 +1,7 @@
-# dsh-git bundle patch 层：往 profile 里插入一个 server 插件行。
+# @taontech/dsh-git bundle patch 层：往 profile 里插入一个 server 插件行。
 # 该行由 loader 加载 lib/index.js（依赖 webServer 服务）；
 # client 端界面由同一包的 dsh.client 声明自动发现（lib/client.js），
 # 注册到 conversation.view slot（chat / Trajectory 之后的 Git tab）。
 - insert:
     - id: dsh-git
-      name: 'dsh-git'
+      name: '@taontech/dsh-git'

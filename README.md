@@ -1,8 +1,9 @@
-# dsh-git —— DeepSeek Harness 的 Git tab 插件
+# @taontech/dsh-git —— DeepSeek Harness 的 Git tab 插件
 
 在 DSH 的会话界面（chat / Trajectory 之后）新增一个 **Git** tab，展示当前
-项目路径的 Git 信息：仓库概况、文件修改状态、提交历史、分支与提交图；
-非 Git 目录则显示文件列表并支持一键 `git init`。
+项目路径的 Git 信息：仓库概况、文件修改状态、提交历史、分支与提交图，
+以及暂存/提交/推送/拉取/切换分支等操作；非 Git 目录则显示文件列表并支持
+一键 `git init`。
 
 git 命令执行全部委托给 [`gmc`](https://www.npmjs.com/package/gmc)
 （`gmc/lib/git.js` 的 `runGit`），本插件只做解析、组合与展示。
@@ -10,7 +11,7 @@ git 命令执行全部委托给 [`gmc`](https://www.npmjs.com/package/gmc)
 ## 架构（一个包，双面）
 
 ```
-dsh-git (npm 包)
+@taontech/dsh-git (npm 包)
 ├── cordis.patch.yml    # bundle patch：插入 server 插件行（id: dsh-git）
 ├── lib/index.js        # server 插件：注册 webServer 路由 /dsh-git/*（JSON API）
 ├── lib/git-data.js     # 数据层：gmc 封装 + status/log/branch/init 解析
@@ -25,13 +26,22 @@ dsh-git (npm 包)
 
 ## 安装（装进某个 profile）
 
+本地开发（link:）：
+
 ```bash
 dsh plugin --profile <name> add /path/to/this/package
+```
+
+发布后（registry）：
+
+```bash
+dsh plugin --profile <name> add @taontech/dsh-git
 dsh --profile <name> --dump-config   # 确认 dsh-git 行与 bundles 生效
 ```
 
-web profile 的 client-modules 会自动扫描 `dsh.client` 声明，把 `lib/client.js`
-注入浏览器 boot graph —— 装完**重启该 profile 的 GUI** 即可看到 Git tab。
+两种方式 pnpm 都会自动安装 gmc 依赖。web profile 的 client-modules 会自动
+扫描 `dsh.client` 声明，把 `lib/client.js` 注入浏览器 boot graph —— 装完
+**重启该 profile 的 GUI** 即可看到 Git tab。
 
 ## API（同源 JSON，浏览器直接 fetch）
 
