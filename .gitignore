@@ -1,0 +1,10 @@
+# 依赖与本地工具
+node_modules/
+package-lock.json
+
+# 演示用的临时 DSH home 与 pnpm store（DSH_HOME 指向）
+.dsh-home/
+.pnpm-store/
+
+# npm 本地缓存
+node_modules/.npm-cache/
