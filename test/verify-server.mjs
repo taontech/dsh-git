@@ -15,8 +15,10 @@ import {
   stageFiles,
   unstageFiles,
   commit,
-  checkoutBranch
+  checkoutBranch,
+  collectCommitDetail
 } from "../lib/git-data.js";
+import { detectProjectType } from "../lib/launch.js";
 
 let pass = 0;
 function check(label, cond) {
@@ -133,6 +135,20 @@ try {
     rejected = true;
   }
   check("不存在分支被拒绝", rejected === true);
+
+  console.log("── 提交详情场景 ──");
+  const detail = collectCommitDetail(repoDir, logAfter[0].hash);
+  check("collectCommitDetail 返回完整哈希", detail.hash === logAfter[0].hash);
+  check("collectCommitDetail 返回 subject", detail.subject === "feat: update app");
+  check("collectCommitDetail 返回 stat 包含改动文件", detail.stat.includes("src/a.js"));
+
+  console.log("── 项目类型探测场景 ──");
+  const ideDefault = detectProjectType(repoDir);
+  check("默认项目探测为 VS Code", ideDefault.ide === "code");
+  // 模拟 xcode
+  writeFileSync(join(repoDir, "App.xcodeproj"), "");
+  const ideXcode = detectProjectType(repoDir);
+  check("带 xcodeproj 探测为 Xcode", ideXcode.ide === "xcode" && ideXcode.ideLabel === "Xcode");
 
   console.log(`\n✅ 全部 ${pass} 项检查通过`);
 } finally {
