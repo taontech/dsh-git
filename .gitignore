@@ -8,3 +8,4 @@ package-lock.json
 
 # npm 本地缓存
 node_modules/.npm-cache/
+/git.webloc
