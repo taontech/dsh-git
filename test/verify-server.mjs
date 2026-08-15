@@ -16,7 +16,9 @@ import {
   unstageFiles,
   commit,
   checkoutBranch,
-  collectCommitDetail
+  collectCommitDetail,
+  collectWorkspaceFiles,
+  collectFileContent
 } from "../lib/git-data.js";
 import { detectProjectType } from "../lib/launch.js";
 
@@ -141,6 +143,25 @@ try {
   check("collectCommitDetail 返回完整哈希", detail.hash === logAfter[0].hash);
   check("collectCommitDetail 返回 subject", detail.subject === "feat: update app");
   check("collectCommitDetail 返回 stat 包含改动文件", detail.stat.includes("src/a.js"));
+
+  console.log("── 工作区文件与文件内容查看场景 ──");
+  const wsFiles = collectWorkspaceFiles(repoDir);
+  check("collectWorkspaceFiles 返回所有文件", wsFiles.files.length >= 3);
+  check("wsFiles 包含 README.md 与 src/a.js", wsFiles.files.some((f) => f.path === "README.md") && wsFiles.files.some((f) => f.path === "src/a.js"));
+  
+  const fileData = collectFileContent(repoDir, "src/a.js");
+  check("collectFileContent 返回 content", fileData.content.includes("console.log"));
+  check("collectFileContent 返回 language=JavaScript", fileData.language === "JavaScript");
+  check("collectFileContent binary === false", fileData.binary === false);
+
+  // 路径逃逸检测
+  let escapeDenied = false;
+  try {
+    collectFileContent(repoDir, "../../../etc/passwd");
+  } catch {
+    escapeDenied = true;
+  }
+  check("路径逃逸被安全拦截", escapeDenied === true);
 
   console.log("── 项目类型探测场景 ──");
   const ideDefault = detectProjectType(repoDir);
