@@ -25,7 +25,7 @@ git 命令执行全部委托给 [`gmc`](https://www.npmjs.com/package/gmc)
 | 面 | 机制 | 职责 |
 | --- | --- | --- |
 | Server（bundle） | `dsh.bundle.patch` + `inject: ["webServer"]` | `/dsh-git/info|status|log|branches|contributions|init|open-terminal|open-agent` |
-| Client | `dsh.client` 声明 + `./client` 入口 | `ctx.slots.inject("conversation.view")` 注册 `id: "git"`，tab 自动出现在 chat/Trajectory 之后 |
+| Client | `dsh.client` 声明 + `./client` 入口 | 1. `ctx.slots.inject("conversation.view")` 注册 `id: "git"` 完整管理标签页<br>2. `ctx.slots.inject("conversation.input.dock")` 注册空白会话首页 Hero 概况卡片（分支、热力图、快捷启动、一键跳转完整管理页） |
 
 ## 安装（装进某个 profile）
 
