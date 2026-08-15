@@ -114,15 +114,12 @@ try {
   const commitResult = commit(repoDir, "feat: update app");
   check("commit 成功且返回 shortHash", commitResult.ok === true && typeof commitResult.shortHash === "string" && commitResult.shortHash.length >= 7);
   const logAfter = collectLog(repoDir);
-  check("log 现在有 2 条提交", logAfter.length === 2 && logAfter[0].subject === "feat: update app");
-  // 空消息被拒绝
-  rejected = false;
-  try {
-    commit(repoDir, "   ");
-  } catch {
-    rejected = true;
-  }
-  check("空提交消息被拒绝", rejected === true);
+  // 空消息默认作为 gmc 提交
+  stageFiles(repoDir, ["notes.txt"]);
+  const gmcCommitResult = commit(repoDir, "   ");
+  check("空提交消息自动使用 gmc 提交", gmcCommitResult.ok === true && typeof gmcCommitResult.shortHash === "string");
+  const logAfterGmc = collectLog(repoDir);
+  check("log 现在有 3 条提交", logAfterGmc.length === 3);
   // 分支切换：新建 feature 分支再切回
   execFileSync("git", ["switch", "-c", "feature"], { cwd: repoDir });
   check("collectBranches 含 feature 且为当前", collectBranches(repoDir).branches.some((b) => b.name === "feature" && b.current));
