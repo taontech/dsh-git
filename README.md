@@ -1,5 +1,5 @@
 # @taontech/dsh-git —— DeepSeek Harness 的 Git tab 插件
-
+![screen]([https://example.com/logo.png](https://raw.githubusercontent.com/taontech/dsh-git/76047d87cc66a061168cff7e29981febfbf57193/empty.png)
 在 DSH 的会话界面（chat / Trajectory 之后）新增一个 **Git** tab，展示当前
 项目路径的 Git 信息：仓库概况、文件修改状态、提交历史、分支与提交图、
 贡献日历（最近一年每日提交热力图），以及暂存/提交/推送/拉取/切换分支等
