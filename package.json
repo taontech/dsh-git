@@ -1,6 +1,6 @@
 {
   "name": "@taontech/dsh-git",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Git tab for DeepSeek Harness: repo overview, file status, commit history, branch view, git init and git operations — powered by gmc.",
   "type": "module",
   "main": "lib/index.js",
